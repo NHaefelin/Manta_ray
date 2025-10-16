@@ -15,17 +15,21 @@ identifier, and study name.This all saved as raw data as manta_data.
 
 Clean data used includes:
 individuals_per_site - 25 observations with 2 variables - describes which individual
-was seen at which site grouped by their ID and 1 of 3 sites 
+was seen at which site grouped by their ID and 1 of 3 sites. 
+Colnames: individual-local-identifier, locality
 
 manta_per_site - 4 observations with 2 variables - describes number of individuals at 
 each of 3 separate sites for total of 25 individuals tagged 
+Colnames: locality, n_individuals
 
 obs_per_manta - 25 observations with 2 variables - describes number of observations
 (or pings on tracker) for each individual manta (excludes location)
+Colnames: individual-local-identifier, n_observations
 
 obs_per_manta_site - 25 observations with 3 variables - describes number of
 observations of each individual manta for each of 3 study sites. This will most likely
-be most helfpul for data visualization.
+be most helfpul for data visualization
+Colnames: locality, individual-local-identifier, n_observations
 
 Next steps will be learning how to incorporate longitude and latitude into data
 and then visualizing data 
