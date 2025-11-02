@@ -17,6 +17,9 @@
 library(EVR628tools)
 library(tidyverse)
 library(janitor)
+library(sf)
+library(mapview)
+
 
 ## Load data -------------------------------------------------------------------
 manta_data <- read_csv(file = "data/raw/Reef manta ray (Mobula alfredi) home range in Indonesia-gps.csv")
@@ -49,28 +52,23 @@ obs_per_manta <- manta_data |>
 
 #Observations per manta per site
 obs_per_manta_site <- manta_data |>
+  st_as_sf(coords = c("location-long" , "location-lat") , crs = "EPSG:4326") |>
   group_by(locality, `individual-local-identifier`) |>
-  summarize(n_observations = n())
+  summarize(n_observations = n(), do_union = FALSE,
+            .groups = "drop") |>
+  st_cast("LINESTRING")
+
+plot(obs_per_manta_site, max.plot = 1)
+
+mapview(obs_per_manta_site)
 
 #summary - there is 25 distinct manta data at 3 distinct sites
-#next do i need to include long/lat or timestamp in the data above to be able to
-#visualize data
-
-## Some step -------------------------------------------------------------------
-
-# VISUALIZE ####################################################################
-
-## Another step ----------------------------------------------------------------
-
-# ANALYSIS #####################################################################
-
-## Almost last step ------------------------------------------------------------
 
 
 # EXPORT #######################################################################
 
 ## The final step --------------------------------------------------------------
-
+write_rds(obs_per_manta_site, "data/processed/obs_per_manta_site.rds")
 
 
 
