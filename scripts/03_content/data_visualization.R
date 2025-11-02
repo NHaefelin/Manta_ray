@@ -21,7 +21,7 @@ library(cowplot)
 
 ## Load data -------------------------------------------------------------------
 
-manta_obs_per_site <- read_rds("Users/norin/Desktop/Projects - Data management/Manta Ray/Manta_ray/data/processed/obs_per_manta_site.rds")
+manta_obs_per_site <- read_rds("data/processed/obs_per_manta_site.rds")
 
 # VISUALIZE ####################################################################
 #first graph showing number of manta observations for each 25 manta at each 4 sites
@@ -58,4 +58,4 @@ plot(manta_obs_per_site, max.plot = 1)
 int_map <- mapview(manta_obs_per_site)
 
 # EXPORT #######################################################################
-ggsave(plot = my_plot, filename = "Users/norin/Desktop/Projects - Data management/Manta Ray/Manta_ray/results/img/my_plot.png")
+ggsave(plot = my_plot, filename = "results/img/my_plot.png")
