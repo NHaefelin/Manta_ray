@@ -55,7 +55,7 @@ my_plot
 #bonus interactive plot
 plot(manta_obs_per_site, max.plot = 1)
 
-int_map <- mapview(manta_obs_per_site)
+mapview(manta_obs_per_site)
 
 # EXPORT #######################################################################
 ggsave(plot = my_plot, filename = "results/img/my_plot.png")
