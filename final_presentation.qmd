@@ -1,0 +1,133 @@
+---
+title: "Manta Ray Movement Across Indonesia"
+subtitle: "Tracking Movement Data"
+author: "Norina Haefelin"
+institute: "Rosenstiel School of Atmospheric, Earth, and Marine Science"
+format: 
+  revealjs:
+    incremental: true
+    code-fold: true
+---
+
+## Introduction 
+* Manta ray are cute  
+* They often make short-range shuffling movements along upwelling events and thermal fronts in Mexico
+* Little is known about correlations of their movement in Indonesia, where they are often seen close to shore
+* Other satellite tagging of manta rays in Mexico has shown that a majority of the time they are in shallow waters no deeper than 50 m deep (Graham et al., 2012)
+
+## Objectives
+* This manta ray tracking data set is looking at these four regions in Indonesia to analyze insight into their spatial movement patterns
+* Indonesia is home to significant populations of globally vulnerable reef manta rays in four key regions
+* The purpose of the present data set is to analyze Manta ray movements across various areas in Indonesia to analyze difference in movements
+* I wanted to analyze manta ray abundance in these four different areas to see correlations/differences in manta ray movement
+
+## Data Sources 
+* All tracking data downloaded from MoveBank, an online data platform that allows users to publish animal tracking datasets. All data available to the public
+
+* The data looked at 25 different manta rays across 4 locations in Indonesia (Berau, Nusa Penida, Komodo, Raja Ampat)
+
+* <https://www.datarepository.movebank.org>
+
+## Data Processing 
+* The original data was 25 Individual manta rays tracked with 2,960 total observations across 4 different sites. 
+* It was a lot of observations.
+* To clean up the data, I used longitude and latitude with the function st_as_sf(coords) to make sure the lon and lat stayed with their data.
+* Then i used group_by() and summarize(), grouping locality with the individual local identifyer, and summerized number of observations to find observation per manta per site.
+* This gave me my final data set to use for data visualization, essentially  25 observations with 4 variables.
+
+## First Analysis
+* At first the researcher (me) analyzed correlation between coral reefs and manta ray tracking data 
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+# Load packages
+library(EVR628tools)
+library(tidyverse)
+library(mapview)
+library(sf)
+library(rnaturalearth)
+library(terra)
+library(ggspatial)
+library(tidyterra)
+
+# Load Data
+manta_obs_per_site <- read_rds("data/processed/obs_per_manta_site.rds")
+
+reefs <- ne_download(scale = 10L, type = "reefs", category = "physical")
+
+depth <- rast("data/raw/depth_raster.tif")
+
+coast <- ne_countries(country = "Indonesia")
+
+#Map View 
+mapview(list(manta_obs_per_site, reefs))
+```
+# That proved unsuccessful. No significant correlation between reefs and manta ray movement.
+
+## Main Findings 
+* So next, the researcher (still me) analyzed manta ray abundance to depth (see next slide) and found that these manta ray do enjoy shallower waters
+* These are congurent results found in Mexico
+
+#
+```{r}
+#| code-fold: true
+#| message: false
+#| warning: false
+#| echo: true
+indonesia_depth <- crop(depth, manta_obs_per_site)
+
+indonesia_coast <- st_crop(coast, manta_obs_per_site)
+
+ggplot() +
+  geom_spatraster_contour(data = indonesia_depth,
+                          aes(colour = after_stat(level)),
+                          linewidth = 0.5) +
+  geom_sf(data = manta_obs_per_site, color = "red") +
+  geom_sf(data = indonesia_coast, fill = "darkgrey", color = "purple") +
+  scale_color_viridis_c(option = "mako") +
+  annotation_north_arrow(location = "tr", pad_x = unit(.0001, "in"),
+        pad_y = unit(.0001, "in")) +
+  annotation_scale(location = "br") +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  theme(plot.margin = unit(c(1, 1, 1, 1), "in")) +
+  coord_sf(clip = "off") +
+  theme_classic() +
+  labs(title = "Manta Ray Tracking data in Indonesia",
+       subtitle = "Analysis of Manta Ray Abundance to Depth",
+       x = "Longitutde",
+       y = "Latitude",
+       color = "Depth (m)",
+       caption = "Data: MoveBank Tracking Data")
+
+
+```
+
+## Final Observations
+* Finally, I looked at number of manta rays found at each of the four sites and found significantly higher number of manta rays at Raja Ampat, potentially suggesting a better environment for manta rays
+
+```{r}
+#| code-fold: true
+#| message: false
+#| warning: false
+#| echo: true
+ggplot(data = manta_obs_per_site,
+      mapping = aes(x = locality, y = n_observations)) +
+  geom_col(fill = "blue") +
+  labs(x = "Location",
+       y = "Total Observed",
+       subtitle = "Total Number of Manta Observed by Location",
+       caption = "Data from DataBank Tracking") +
+theme_minimal(base_size = 12)
+```
+
+
+# Thank you for a great semester! :)
+
+
+## References 
+
+* Graham, R. T., Witt, M. J., Castellanos, D. W., Remolina, F., Maxwell, S., Godley, B. J., & Hawkes, L. A. (2012). Satellite tracking of manta rays highlights challenges to their conservation. *PLoS ONE, 7(5)*, 1-6. <https://doi.org/10.1371/journal.pone.0036834>
+
+* <https://datarepository.movebank.org/entities/datapackage/0425c92c-f157-4f92-88f1-f40de2e0405f>
