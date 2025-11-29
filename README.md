@@ -38,3 +38,6 @@ Norina Haefelin
 nxh544@miami.edu
 
 
+FINAL PRESENTATION (html): https://github.com/NHaefelin/Manta_ray/blob/b7779c6bbc0d2652cd5336f1c0d5489ea3fe900a/final_presentation.html
+
+(qmd): https://github.com/NHaefelin/Manta_ray/blob/b7779c6bbc0d2652cd5336f1c0d5489ea3fe900a/final_presentation.qmd
